@@ -1,0 +1,39 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="PBW2AutoPlrClient.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="pbw_address" Type="System.String" Scope="User">
+      <Value Profile="(Default)">beta.pbw.spaceempires.net/</Value>
+    </Setting>
+    <Setting Name="user_login" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Xintus</Value>
+    </Setting>
+    <Setting Name="user_password" Type="System.String" Scope="User">
+      <Value Profile="(Default)">xintusRules</Value>
+    </Setting>
+    <Setting Name="pbw_login_path" Type="System.String" Scope="User">
+      <Value Profile="(Default)">login/process</Value>
+    </Setting>
+    <Setting Name="pbw_games_list_path" Type="System.String" Scope="User">
+      <Value Profile="(Default)">node/player</Value>
+    </Setting>
+    <Setting Name="pbw_player_download_path" Type="System.String" Scope="User">
+      <Value Profile="(Default)">player-turn/download</Value>
+    </Setting>
+    <Setting Name="pbw_upload_playerfile_path" Type="System.String" Scope="User">
+      <Value Profile="(Default)">player-turn/upload</Value>
+    </Setting>
+    <Setting Name="pbw_uploadFormParam_player" Type="System.String" Scope="User">
+      <Value Profile="(Default)">plr_file</Value>
+    </Setting>
+    <Setting Name="user_download_path" Type="System.String" Scope="User">
+      <Value Profile="(Default)">downloadfiles\</Value>
+    </Setting>
+    <Setting Name="user_savelogin" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="pbw_game_path" Type="System.String" Scope="User">
+      <Value Profile="(Default)">games/</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

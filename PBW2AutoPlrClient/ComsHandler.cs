@@ -136,7 +136,8 @@ namespace PBW2AutoPlrClient
             }
             finally
             {
-                resStream.Close();
+                if (resStream != null)
+                { resStream.Close(); }
             }
 			return returnString;
 		}

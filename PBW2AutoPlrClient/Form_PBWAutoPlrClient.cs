@@ -63,7 +63,6 @@ namespace PBW2AutoPlrClient
 
         private void dataGridView_games_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-
             selected_game = dataGridView_games[0, e.RowIndex].Value.ToString();
             button_download.Enabled = true;
             button_extract.Enabled = true;
@@ -319,7 +318,9 @@ namespace PBW2AutoPlrClient
             dataGridView_games.Columns["GamePlrStatus"].DisplayIndex = 1;
             dataGridView_games.Columns["GameNextTurn"].DisplayIndex = 2;
             dataGridView_games.Columns["GamePlrEmpPassword"].Visible = false;
+                      
             dataGridView_games.Rows[selected_gameIndex].Selected = true;
+            dataGridView_games.CurrentCell = dataGridView_games.Rows[selected_gameIndex].Cells[1];
             dataGridView_games.Refresh();
         }
  

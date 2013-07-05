@@ -26,6 +26,6 @@ the user login info is currently saved in user.config which is plaintext xml in 
 not the best way to do this at all, for PBW it's not critical but I'd prefer to 
 do it the right way and encrypt it.  
 
-add an audable aleart when a new turn is availble.
+add an audable aleart when a new turn is availble. Done! (thanks Ed for the sound).
 
 minimise to tray would be good. 

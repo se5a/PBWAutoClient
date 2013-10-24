@@ -22,9 +22,12 @@ namespace PBW2AutoPlrClient
             Dictionary<string, string> serversettings = new Dictionary<string, string>();
             XContainer root = doc.Root;
             XElement element = XElement.Parse(xmldata);
-            serversettings.Add(element.FirstAttribute.Name.ToString(), element.FirstAttribute.Value.ToString());
-            serversettings.Add(element.LastAttribute.Name.ToString(), element.LastAttribute.Value.ToString()); 
- 
+            
+            if (element.FirstAttribute != null)
+            {
+                serversettings.Add(element.FirstAttribute.Name.ToString(), element.FirstAttribute.Value.ToString());
+                serversettings.Add(element.LastAttribute.Name.ToString(), element.LastAttribute.Value.ToString());
+            }
             return serversettings;
         }
 

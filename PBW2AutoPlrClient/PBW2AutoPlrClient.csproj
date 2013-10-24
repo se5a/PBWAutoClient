@@ -164,7 +164,7 @@
     <Folder Include="downloadfiles\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="endturn.wav">
+    <Content Include="newturn.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

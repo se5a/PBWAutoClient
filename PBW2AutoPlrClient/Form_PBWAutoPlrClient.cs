@@ -200,7 +200,7 @@ namespace PBW2AutoPlrClient
         {
 
             string address = "http://" + ServerSettingsObj.PBW_Address;
-            string node_path = "node";
+            string node_path = "node/player";
             string url = address + node_path;
 
             CookieContainer cookies = ServerSettingsObj.CookieJar;
@@ -630,7 +630,7 @@ namespace PBW2AutoPlrClient
 
         private void playSimpleSound()
         {
-            System.Media.SoundPlayer simpleSound = new System.Media.SoundPlayer(@"endturn.wav");
+            System.Media.SoundPlayer simpleSound = new System.Media.SoundPlayer(@"newturn.wav");
             simpleSound.Play();
         }
 

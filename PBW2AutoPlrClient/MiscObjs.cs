@@ -200,6 +200,8 @@ namespace PBW2AutoPlrClient
 			///$savepath
 			///$modpath
             string fmt = "000#";
+            
+            //thestring = thestring.Replace();
 			thestring = thestring.Replace("$gamename", gameobj.GameName);
 			thestring = thestring.Replace("$plrnumber", gameobj.GamePlrNumber.ToString(fmt));
 			thestring = thestring.Replace("$password", gameobj.GamePlrEmpPassword);
@@ -209,6 +211,7 @@ namespace PBW2AutoPlrClient
 
 			return thestring;                
 		}
+
 	}
 
 	class logger

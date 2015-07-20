@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 
 namespace PBW2AutoPlrClient
@@ -9,7 +7,7 @@ namespace PBW2AutoPlrClient
     class XmlHandler
     {
 
-        public static XDocument loadFile(string filename)
+        public static XDocument LoadFile(string filename)
         {
             XDocument xmlDoc = XDocument.Load(filename);
             return xmlDoc;
@@ -25,15 +23,15 @@ namespace PBW2AutoPlrClient
             
             if (element.FirstAttribute != null)
             {
-                serversettings.Add(element.FirstAttribute.Name.ToString(), element.FirstAttribute.Value.ToString());
-                serversettings.Add(element.LastAttribute.Name.ToString(), element.LastAttribute.Value.ToString());
+                serversettings.Add(element.FirstAttribute.Name.ToString(), element.FirstAttribute.Value);
+                serversettings.Add(element.LastAttribute.Name.ToString(), element.LastAttribute.Value);
             }
             return serversettings;
         }
 
         public static Dictionary<string, GameTypeSettingsObj> GetGameSettings(string filename)
         {
-            XDocument doc = loadFile(filename);
+            XDocument doc = LoadFile(filename);
             
             Dictionary<string, GameTypeSettingsObj> dicofgamesettings = new Dictionary<string, GameTypeSettingsObj>();
             
@@ -51,52 +49,56 @@ namespace PBW2AutoPlrClient
 
                     if (gameNodeName == "gameExe")
                     {
-                        thisgamesettingobj.GameExe = gameElement.Value.ToString().Trim();
+                        thisgamesettingobj.GameExe = gameElement.Value.Trim();
+                    }
+                    else if (gameNodeName == "workingDirectory")
+                    {
+                        thisgamesettingobj.WorkingDirectory = gameElement.Value.Trim();
                     }
                     else if (gameNodeName == "gameArgs")
                     {
-                        thisgamesettingobj.GameArguments = gameElement.Value.ToString().Trim();
+                        thisgamesettingobj.GameArguments = gameElement.Value.Trim();
                     }
                     else if (gameNodeName == "preScriptPath")
                     {
-                        thisgamesettingobj.GamePreScript = gameElement.Value.ToString().Trim();
+                        thisgamesettingobj.GamePreScript = gameElement.Value.Trim();
                     }
                     else if (gameNodeName == "postScriptPath")
                     {
-                        thisgamesettingobj.GamePostScript = gameElement.Value.ToString().Trim();
+                        thisgamesettingobj.GamePostScript = gameElement.Value.Trim();
                     }
                     else if (gameNodeName == "uploadFileMask")
                     {
-                        thisgamesettingobj.GameUploadFileMask = gameElement.Value.ToString().Trim();
+                        thisgamesettingobj.GameUploadFileMask = gameElement.Value.Trim();
                     }
                     else if (gameNodeName == "MODS" || gameNodeName == "mods")
                     {
-                        
+
                         foreach (var modElement in gameElement.Elements())
                         {
                             string modNodeName = modElement.Name.ToString();
                             ModSettingsObj thismodsettingobj = new ModSettingsObj();
                             thismodsettingobj.ModName = modNodeName;
-                           
+
                             foreach (var moddataelemnt in modElement.Elements())
                             {
                                 string moddataNodeName = moddataelemnt.Name.ToString();
                                 if (moddataNodeName == "modPath")
                                 {
-                                    thismodsettingobj.ModPath = moddataelemnt.Value.ToString().Trim();
+                                    thismodsettingobj.ModPath = moddataelemnt.Value.Trim();
                                 }
                                 if (moddataNodeName == "savePath")
                                 {
-                                    thismodsettingobj.ModSavePath = moddataelemnt.Value.ToString().Trim();
+                                    thismodsettingobj.ModSavePath = moddataelemnt.Value.Trim();
                                 }
                             }
 
                             thisgamesettingobj.GameMods.Add(modNodeName, thismodsettingobj);
-                            
+
                         }
-                        
+
                     }
-                    
+
                 }
 
             }
@@ -115,22 +117,22 @@ namespace PBW2AutoPlrClient
         /// <remarks>
         /// 
         /// </remarks>
-        public static Dictionary<string, GameObject> xmlToGameObj(string xmlstring, Dictionary<string, GameObject> dictionaryofgameobjects)
+        public static Dictionary<string, GameObject> XmlToGameObj(string xmlstring, Dictionary<string, GameObject> dictionaryofgameobjects)
         {
             List<List<string>> listofgames = new List<List<string>>();
 
-            string[] lines = xmlstring.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            string[] lines = xmlstring.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             
             int boxindex = 0;
-            bool data_is_game = false;
+            bool dataIsGame = false;
             foreach (string line in lines)
             {
                 //List<string> thisgame = new List<string>();
-                string line_trim = line.Trim();
+                string lineTrim = line.Trim();
 
-                if (line_trim == @"</game>")
+                if (lineTrim == @"</game>")
                 {
-                    data_is_game = false;
+                    dataIsGame = false;
                     GameObject thisgameobj = new GameObject(listofgames[boxindex]);
                     if (dictionaryofgameobjects.ContainsKey(thisgameobj.GameName))
                     {
@@ -142,14 +144,14 @@ namespace PBW2AutoPlrClient
                     }
                     boxindex += 1;
                 }
-                if (data_is_game)
+                if (dataIsGame)
                 {
-                    listofgames[boxindex].Add(line_trim);
+                    listofgames[boxindex].Add(lineTrim);
                 }
 
-                if (line_trim == "<game>")
+                if (lineTrim == "<game>")
                 {
-                    data_is_game = true;
+                    dataIsGame = true;
                     listofgames.Add(new List<string>());
                 }
             }

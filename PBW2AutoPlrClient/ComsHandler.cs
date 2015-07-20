@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
 using System.IO;
-using PBW2AutoPlrClient.Properties;
-
+using System.Net;
+using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
 
 namespace PBW2AutoPlrClient
 {
-	class PBW_ComsHandler
+	class PbwComsHandler
     {		
         /// <summary>
 		/// logs into pbw http.
 		/// </summary>
-		/// <param name="login_address">The full login path.</param>
+		/// <param name="loginAddress">The full login path.</param>
 		/// <param name="username">The username.</param>
 		/// <param name="password">The password.</param>
 		/// <returns>
@@ -23,18 +22,18 @@ namespace PBW2AutoPlrClient
 		/// <remarks>
 		/// Todo: handle errors. better.
 		/// </remarks>
-		public static bool connectPBW(string login_address, string username, string password)
+		public static bool ConnectPbw(string loginAddress, string username, string password)
 		{
 			bool success = false;
 			HttpWebRequest request;
 			HttpWebResponse response;
 			CookieContainer chocolatecookies = new CookieContainer();
-			logger.logwrite("attempting to connect to PBW \r\n");
-			logger.logwrite("using address " + login_address + "\r\n");
+			Logger.Logwrite("attempting to connect to PBW \r\n");
+			Logger.Logwrite("using address " + loginAddress + "\r\n");
 			try
 			{
 				
-				request = (HttpWebRequest)WebRequest.Create(login_address);
+				request = (HttpWebRequest)WebRequest.Create(loginAddress);
 				request.Method = "POST";
 				request.ContentType = "application/x-www-form-urlencoded";
 				using (StreamWriter writer = new StreamWriter(request.GetRequestStream(), Encoding.ASCII))
@@ -47,12 +46,12 @@ namespace PBW2AutoPlrClient
        
 				if (response.StatusCode.ToString() == "OK")
 				{
-					ServerSettingsObj.Connection_Status = "Connected";
+					ServerSettingsObj.ConnectionStatus = "Connected";
 				}
-				logger.logwrite("Status Code = " + response.StatusCode + "\r\n");
-				logger.logwrite("Status Description = " + response.StatusDescription + "\r\n");
-				logger.logwrite("cookies = " + response.Cookies + "\r\n");
-				logger.logwrite("server = " + response.Server + "\r\n");
+				Logger.Logwrite("Status Code = " + response.StatusCode + "\r\n");
+				Logger.Logwrite("Status Description = " + response.StatusDescription + "\r\n");
+				Logger.Logwrite("cookies = " + response.Cookies + "\r\n");
+				Logger.Logwrite("server = " + response.Server + "\r\n");
 
 				chocolatecookies = request.CookieContainer;
 				success = true;
@@ -63,8 +62,8 @@ namespace PBW2AutoPlrClient
                 string headers = response.Headers.ToString();
                 //logger.logwrite("LOGIN RESPONSE");
                 //logger.logwrite(fullResponse);
-                logger.logwrite("CONNECT HEADER RESPONSE");
-                logger.logwrite(headers);
+                Logger.Logwrite("CONNECT HEADER RESPONSE");
+                Logger.Logwrite(headers);
                 if (fullResponse.Contains("Player file received."))
                 {
                     success = true;
@@ -73,7 +72,7 @@ namespace PBW2AutoPlrClient
 			}
 			catch (WebException e)
 			{
-				System.Windows.Forms.MessageBox.Show(e.Message + " While logging in");
+				MessageBox.Show(e.Message + " While logging in");
 				success = false;
 			}
 
@@ -111,7 +110,7 @@ namespace PBW2AutoPlrClient
                 request = (HttpWebRequest)WebRequest.Create(url);
                 request.CookieContainer = cookies;
 
-                request.UserAgent = "PBWAutoClient/" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                request.UserAgent = "PBWAutoClient/" + Assembly.GetExecutingAssembly().GetName().Version;
                 response = (HttpWebResponse)request.GetResponse();
                 resStream = response.GetResponseStream();
 
@@ -132,7 +131,7 @@ namespace PBW2AutoPlrClient
             }
             catch (WebException e)
             {
-                System.Windows.Forms.MessageBox.Show(e.Message + " While getting XmlData");
+                MessageBox.Show(e.Message + " While getting XmlData");
             }
             finally
             {
@@ -143,9 +142,9 @@ namespace PBW2AutoPlrClient
 		}
 
 
-		public static void downloadGame(CookieContainer cookies, string fulldownloadpath, string downloadfilename)
+		public static void DownloadGame(CookieContainer cookies, string fulldownloadpath, string downloadfilename)
 		{
-			logger.logwrite("attempting download at address " + fulldownloadpath + "\r\n");
+			Logger.Logwrite("attempting download at address " + fulldownloadpath + "\r\n");
             FileStream fileStream = File.Create(downloadfilename);
 
             try
@@ -157,8 +156,8 @@ namespace PBW2AutoPlrClient
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 Stream responseStream = response.GetResponseStream();
 
-                logger.logwrite("response StatusCode is " + response.StatusCode + "\r\n");
-                logger.logwrite("response StatusDescription is " + response.StatusDescription + "\r\n");
+                Logger.Logwrite("response StatusCode is " + response.StatusCode + "\r\n");
+                Logger.Logwrite("response StatusDescription is " + response.StatusDescription + "\r\n");
 
                 int buffersize = 1024;
                 byte[] buffer = new byte[buffersize];
@@ -181,7 +180,7 @@ namespace PBW2AutoPlrClient
 
             catch (WebException e)
             {
-                System.Windows.Forms.MessageBox.Show(e.Message + " While downloading turn file");
+                MessageBox.Show(e.Message + " While downloading turn file");
 
             }
             finally
@@ -191,16 +190,16 @@ namespace PBW2AutoPlrClient
 		}
 
 
-        public static bool uploadTurn(CookieContainer cookies, string file, string uploadurl, string uploadFormParam)
+        public static bool UploadTurn(CookieContainer cookies, string file, string uploadurl, string uploadFormParam)
         {
             //adapted from and many thanks to: http://www.briangrinstead.com/blog/multipart-form-post-in-c
-            logger.logwrite("attempting upload of " + file + " at url " + uploadurl + " with form data " + uploadFormParam + "\r\n");
-            bool was_succeess = false;
+            Logger.Logwrite("attempting upload of " + file + " at url " + uploadurl + " with form data " + uploadFormParam + "\r\n");
+            bool wasSucceess = false;
 
             string filename = Path.GetFileName(file);
             string fileformat = uploadFormParam; 
             string maxfilesize = "67108864";
-            string content_type = "application/octet-stream";
+            string contentType = "application/octet-stream";
 
             try
             {
@@ -214,12 +213,12 @@ namespace PBW2AutoPlrClient
                 Dictionary<string, object> postParameters = new Dictionary<string, object>();
                 postParameters.Add("MAX_FILE_SIZE", maxfilesize);
                 postParameters.Add("fileformat", fileformat);
-                postParameters.Add(uploadFormParam, new FormUpload.FileParameter(data, filename, content_type)); 
+                postParameters.Add(uploadFormParam, new FormUpload.FileParameter(data, filename, contentType)); 
 
                 // Create request and receive response
-                string postURL = uploadurl;
-                string userAgent = "PBWAutoClient/" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                HttpWebResponse webResponse = FormUpload.MultipartFormDataPost(cookies, postURL, userAgent, postParameters);
+                string postUrl = uploadurl;
+                string userAgent = "PBWAutoClient/" + Assembly.GetExecutingAssembly().GetName().Version;
+                HttpWebResponse webResponse = FormUpload.MultipartFormDataPost(cookies, postUrl, userAgent, postParameters);
 
                 // Process response
                 StreamReader responseReader = new StreamReader(webResponse.GetResponseStream());
@@ -228,23 +227,23 @@ namespace PBW2AutoPlrClient
                 //Response.Write(fullResponse);
                 //logger.logwrite(fullResponse);
                 string headers = webResponse.Headers.ToString();
-                logger.logwrite(headers);
+                Logger.Logwrite(headers);
                 if (fullResponse.Contains("Player file received."))
                 { 
-                    was_succeess = true; 
+                    wasSucceess = true; 
                 }
             }
 
             catch (Exception e)
             {
-                logger.logwrite(e.Message.ToString() + " While attempting upload");
+                Logger.Logwrite(e.Message + " While attempting upload");
             }
             finally
             {
                 
             }
 
-            return was_succeess;
+            return wasSucceess;
         }
 	}
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Net;
-using System.IO;
+using PBW2AutoPlrClient.Properties;
 
 namespace PBW2AutoPlrClient
 {
@@ -12,6 +11,7 @@ namespace PBW2AutoPlrClient
 
 		public string GameTypeName { get; set; }
 		public string GameExe { get; set; }
+        public string WorkingDirectory { get; set; }
 		public string GameArguments { get; set; }
 		public string GamePreScript { get; set; }
 		public string GamePostScript { get; set; }
@@ -31,26 +31,26 @@ namespace PBW2AutoPlrClient
 	static class ServerSettingsObj
 	{
 
-		private static string pbw_address;
-		private static string pbw_loginpath;
-		private static string pbw_gamelistpath;
-		private static string pbw_uploadturnformparam;
-		private static string pbw_uploadplrfilepath;
-		private static string pbw_turndownloadpath;
-		private static string pbw_gamepath;
-		private static bool user_savelogin;
-		private static string user_username;
-		private static string user_password;
-        private static string user_dl_dir;
-		private static CookieContainer cookiejar;
-        private static string connection_status;
-        private static int refresh_rate;
+		private static string _pbwAddress;
+		private static string _pbwLoginpath;
+		private static string _pbwGamelistpath;
+		private static string _pbwUploadturnformparam;
+		private static string _pbwUploadplrfilepath;
+		private static string _pbwTurndownloadpath;
+		private static string _pbwGamepath;
+		private static bool _userSavelogin;
+		private static string _userUsername;
+		private static string _userPassword;
+        private static string _userDlDir;
+		private static CookieContainer _cookiejar;
+        private static string _connectionStatus;
+        private static int _refreshRate;
 
 
-        public static int Refresh_Rate
+        public static int RefreshRate
         {
-            get { return refresh_rate; }
-            set { refresh_rate = value; }
+            get { return _refreshRate; }
+            set { _refreshRate = value; }
         }
 
         /// <summary>
@@ -64,116 +64,116 @@ namespace PBW2AutoPlrClient
         /// "Not Found" 
         /// "Time Out"
         /// </remarks>
-        public static string Connection_Status
+        public static string ConnectionStatus
         {
 
-            get { return connection_status; }
+            get { return _connectionStatus; }
             set 
             {
                 if ((value == "Connected") || (value == "Disconnected") || (value == "Auth Fail") || (value == "Not Found") || (value == "Time Out"))
-                    { connection_status = value; }
+                    { _connectionStatus = value; }
                 else
                 {
-                    throw new System.ArgumentException("Invalid argument for ConnectionStatus");        
+                    throw new ArgumentException("Invalid argument for ConnectionStatus");        
                 }
             }
         }
 		public static CookieContainer CookieJar
 		{
-			get { return cookiejar; }
-			set { cookiejar = value; }
+			get { return _cookiejar; }
+			set { _cookiejar = value; }
 		}
-		public static string PBW_Address 
+		public static string PbwAddress 
 		{
-			get { return pbw_address; }
-			set { pbw_address = value; } 
+			get { return _pbwAddress; }
+			set { _pbwAddress = value; } 
 		}
-		public static string PBW_GamesListPath 
+		public static string PbwGamesListPath 
 		{
-			get { return pbw_gamelistpath; }
-			set { pbw_gamelistpath = value; }
+			get { return _pbwGamelistpath; }
+			set { _pbwGamelistpath = value; }
 		}
-		public static string PBW_GamePath
+		public static string PbwGamePath
 		{
-			get { return pbw_gamepath; }
-			set { pbw_gamepath = value; }
+			get { return _pbwGamepath; }
+			set { _pbwGamepath = value; }
 		}
-		public static string PBW_LoginPath 
+		public static string PbwLoginPath 
 		{
-			get { return pbw_loginpath; }
-			set { pbw_loginpath = value; }
+			get { return _pbwLoginpath; }
+			set { _pbwLoginpath = value; }
 		}
-		public static string PBW_UploadTurnFormParam
+		public static string PbwUploadTurnFormParam
 		{
-			get { return pbw_uploadturnformparam; }
-			set { pbw_uploadturnformparam = value; }
+			get { return _pbwUploadturnformparam; }
+			set { _pbwUploadturnformparam = value; }
 		}
-		public static string PBW_UploadPlrFilePath
+		public static string PbwUploadPlrFilePath
 		{
-			get { return pbw_uploadplrfilepath; }
-			set { pbw_uploadplrfilepath = value; }
+			get { return _pbwUploadplrfilepath; }
+			set { _pbwUploadplrfilepath = value; }
 		}
-		public static string PBW_TurnDownloadPath
+		public static string PbwTurnDownloadPath
 		{ 
-			get { return pbw_turndownloadpath; }
-			set { pbw_turndownloadpath = value; }
+			get { return _pbwTurndownloadpath; }
+			set { _pbwTurndownloadpath = value; }
 		}
 
-		public static bool User_SaveLogin
+		public static bool UserSaveLogin
 		{
-			get { return user_savelogin; }
-			set { user_savelogin = value; }
+			get { return _userSavelogin; }
+			set { _userSavelogin = value; }
 		}
-		public static string User_UserName
+		public static string UserUserName
 		{
-			get {return user_username; }
-			set { user_username = value; }
+			get {return _userUsername; }
+			set { _userUsername = value; }
 		}
-		public static string User_Password
+		public static string UserPassword
 		{
-			get { return user_password; }
-			set { user_password = value; }
+			get { return _userPassword; }
+			set { _userPassword = value; }
 		}
-        public static string User_Download_Directory
+        public static string UserDownloadDirectory
         {
-            get { return user_dl_dir; }
-            set { user_dl_dir = value; }
+            get { return _userDlDir; }
+            set { _userDlDir = value; }
         }
 
-		public static void loadSettings()
+		public static void LoadSettings()
 		{
-			var settings = PBW2AutoPlrClient.Properties.Settings.Default;
-			pbw_address = settings.pbw_address;
-			pbw_gamelistpath = settings.pbw_games_list_path;
-			pbw_loginpath = settings.pbw_login_path;
-			pbw_uploadturnformparam = settings.pbw_uploadFormParam_player;
-			pbw_uploadplrfilepath = settings.pbw_upload_playerfile_path;
-			pbw_turndownloadpath = settings.pbw_player_download_path;
-			pbw_gamepath = settings.pbw_game_path;
+			var settings = Settings.Default;
+			_pbwAddress = settings.pbw_address;
+			_pbwGamelistpath = settings.pbw_games_list_path;
+			_pbwLoginpath = settings.pbw_login_path;
+			_pbwUploadturnformparam = settings.pbw_uploadFormParam_player;
+			_pbwUploadplrfilepath = settings.pbw_upload_playerfile_path;
+			_pbwTurndownloadpath = settings.pbw_player_download_path;
+			_pbwGamepath = settings.pbw_game_path;
  
-			User_SaveLogin = settings.user_savelogin;
-			User_UserName = settings.user_login;
-			User_Password = settings.user_password;
-            User_Download_Directory = settings.user_download_path;
+			UserSaveLogin = settings.user_savelogin;
+			UserUserName = settings.user_login;
+			UserPassword = settings.user_password;
+            UserDownloadDirectory = settings.user_download_path;
 		}
 
-		public static void saveSettings()
+		public static void SaveSettings()
 		{
-			var settings = PBW2AutoPlrClient.Properties.Settings.Default;
-			settings.pbw_address = pbw_address;
-			settings.pbw_login_path = pbw_loginpath;
-			settings.pbw_player_download_path = pbw_turndownloadpath;
-			settings.pbw_games_list_path = pbw_gamelistpath;
-			settings.pbw_upload_playerfile_path = pbw_uploadplrfilepath;
-			settings.pbw_uploadFormParam_player = pbw_uploadturnformparam;
-			settings.pbw_game_path = pbw_gamepath;
-			settings.user_savelogin = user_savelogin;
-            settings.user_download_path = user_dl_dir;
+			var settings = Settings.Default;
+			settings.pbw_address = _pbwAddress;
+			settings.pbw_login_path = _pbwLoginpath;
+			settings.pbw_player_download_path = _pbwTurndownloadpath;
+			settings.pbw_games_list_path = _pbwGamelistpath;
+			settings.pbw_upload_playerfile_path = _pbwUploadplrfilepath;
+			settings.pbw_uploadFormParam_player = _pbwUploadturnformparam;
+			settings.pbw_game_path = _pbwGamepath;
+			settings.user_savelogin = _userSavelogin;
+            settings.user_download_path = _userDlDir;
 
-			if (user_savelogin)
+			if (_userSavelogin)
 			{
-				settings.user_login = user_username;
-				settings.user_password = user_password;
+				settings.user_login = _userUsername;
+				settings.user_password = _userPassword;
 			}
 			else
 			{
@@ -190,7 +190,7 @@ namespace PBW2AutoPlrClient
 
 	class Interpreter
 	{
-		public static string interpretString(string thestring, GameObject gameobj, GameTypeSettingsObj gamesetobj)
+		public static string InterpretString(string thestring, GameObject gameobj, GameTypeSettingsObj gamesetobj)
 		{
 			
 			///$gamename
@@ -214,27 +214,27 @@ namespace PBW2AutoPlrClient
 
 	}
 
-	class logger
+	class Logger
 	{
-		private static List<string> log = new List<string>();
-		private static int readCount = 0;
-		public static void logwrite(string text, bool newline = true)
+		private static List<string> _log = new List<string>();
+		private static int _readCount;
+		public static void Logwrite(string text, bool newline = true)
 		{
 			if (newline) { text += "\r\n"; }
-			log.Add(text);
+			_log.Add(text);
 			
 		}
-		public static IEnumerable<string> logreadall(bool markRead = true)
+		public static IEnumerable<string> Logreadall(bool markRead = true)
 		{
 			if (markRead)
-				readCount = log.Count;
-			return log;
+				_readCount = _log.Count;
+			return _log;
 		}
-		public static IEnumerable<string> logread(bool markRead = true)
+		public static IEnumerable<string> Logread(bool markRead = true)
 		{
-			var result = log.Skip(readCount).ToArray();
+			var result = _log.Skip(_readCount).ToArray();
 			if (markRead)
-				readCount = log.Count;
+				_readCount = _log.Count;
 			return result;
 		}
 	}

@@ -1,49 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.Net;
-using System.IO;
-using System.Xml;
-using System.Xml.Linq;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Media;
+using System.Net;
+using System.Threading;
+using System.Windows.Forms;
+using Timer = System.Windows.Forms.Timer;
+
 //using System.Threading;
 
 namespace PBW2AutoPlrClient
 {
-    public partial class Form_PBWAutoPlrClient : Form
+    public partial class FormPbwAutoPlrClient : Form
     {
 
-        Dictionary<string, GameObject> dictionaryofgameobjects = new Dictionary<string, GameObject>();
-        List<string> gamenames = new List<string>();
-        Dictionary<string, GameTypeSettingsObj> dictionaryofgamessettings = new Dictionary<string, GameTypeSettingsObj>();
-        string selected_game;
-        Timer timer1;        
+        Dictionary<string, GameObject> _gameObjects = new Dictionary<string, GameObject>();
+        Dictionary<string, GameTypeSettingsObj> _gamesSettings = new Dictionary<string, GameTypeSettingsObj>();
+        string _selectedGame;
+        Timer _timer1;        
         
-        public Form_PBWAutoPlrClient()
+        public FormPbwAutoPlrClient()
         {
-            ServerSettingsObj.loadSettings();
+            ServerSettingsObj.LoadSettings();
             InitializeComponent();
-            gameSettingUpdate();
+            GameSettingUpdate();
 
-            timer1 = new Timer();
-            timer1.Tick += new EventHandler(timer1_Tick);
-            timer1.Interval = 120000; // in miliseconds
-            timer1.Start();
+            _timer1 = new Timer();
+            _timer1.Tick += timer1_Tick;
+            _timer1.Interval = 120000; // in miliseconds
+            _timer1.Start();
 
         }
               
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (ServerSettingsObj.Connection_Status == "Connected")
+            if (ServerSettingsObj.ConnectionStatus == "Connected")
             {
-                pbwGamelist(); 
-                refreshlogview();
-                pbwServerData();
+                PbwGamelist(); 
+                Refreshlogview();
+                PbwServerData();
             }
         }
 
@@ -52,18 +49,18 @@ namespace PBW2AutoPlrClient
             FormSettings settingsForm;
             settingsForm = new FormSettings();
             settingsForm.ShowDialog();
-            gameSettingUpdate();
+            GameSettingUpdate();
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            pbwLogin();
+            PbwLogin();
             
         }
 
         private void dataGridView_games_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            selected_game = dataGridView_games[0, e.RowIndex].Value.ToString();
+            _selectedGame = dataGridView_games[0, e.RowIndex].Value.ToString();
             button_download.Enabled = true;
             button_extract.Enabled = true;
             button_playGame.Enabled = true;
@@ -74,7 +71,7 @@ namespace PBW2AutoPlrClient
 
         private void button_download_Click(object sender, EventArgs e)
         {
-            if (selected_game != null)
+            if (_selectedGame != null)
             {
                 download_gamefile();
             }  
@@ -82,7 +79,7 @@ namespace PBW2AutoPlrClient
 
         private void button_upload_Click(object sender, EventArgs e)
         {
-            if (selected_game != null)
+            if (_selectedGame != null)
             {
                 upload_plrfile();
             }
@@ -90,7 +87,7 @@ namespace PBW2AutoPlrClient
             
         private void button_extract_Click(object sender, EventArgs e)
         {
-            if (selected_game != null)
+            if (_selectedGame != null)
             {
                 extract_game();
             }
@@ -98,24 +95,24 @@ namespace PBW2AutoPlrClient
 
         private void button_playGame_Click(object sender, EventArgs e)
         {
-            if (selected_game != null)
+            if (_selectedGame != null)
             {
-                string game_type = dictionaryofgameobjects[selected_game.ToString()].GameType;
-                string pregamescript = (dictionaryofgamessettings[game_type].GamePreScript);
+                string gameType = _gameObjects[_selectedGame].GameType;
+                string pregamescript = (_gamesSettings[gameType].GamePreScript);
                 if ((pregamescript != null) && (pregamescript != ""))
                 {
-                    pregameScriptProcessLauncher();
+                    PregameScriptProcessLauncher();
                 }
                 else
                 {
-                    gameProcessLauncher();
+                    GameProcessLauncher();
                 }
             }
         }
 
         private void button_launchpbw_Click(object sender, EventArgs e)
         {
-            OpenLink("http://" + ServerSettingsObj.PBW_Address);
+            OpenLink("http://" + ServerSettingsObj.PbwAddress);
         }
 
         /// <summary>
@@ -123,33 +120,33 @@ namespace PBW2AutoPlrClient
         /// </summary>
         public void cleanup_download()
         {
-            string download_dir = Path.GetDirectoryName(ServerSettingsObj.User_Download_Directory);
-            string game_name = dictionaryofgameobjects[selected_game].GameName;
+            string downloadDir = Path.GetDirectoryName(ServerSettingsObj.UserDownloadDirectory);
+            string gameName = _gameObjects[_selectedGame].GameName;
 
-            string lastturnnum = (dictionaryofgameobjects[selected_game].GameTurnNum -1).ToString();
-            string filetodel = Path.GetFileName(game_name + lastturnnum + ".rar");
-            string fullpathtodel = Path.GetFullPath(Path.Combine(download_dir, filetodel));
+            string lastturnnum = (_gameObjects[_selectedGame].GameTurnNum -1).ToString();
+            string filetodel = Path.GetFileName(gameName + lastturnnum + ".rar");
+            string fullpathtodel = Path.GetFullPath(Path.Combine(downloadDir, filetodel));
 
-            string[] files = Directory.GetFiles(download_dir);
+            string[] files = Directory.GetFiles(downloadDir);
 
             if (File.Exists(fullpathtodel))
             {
-                logger.logwrite("deleteing file: " + fullpathtodel);
+                Logger.Logwrite("deleteing file: " + fullpathtodel);
                 File.Delete(fullpathtodel);
                 
             }
         }
 
-        public void refreshlogview()
+        public void Refreshlogview()
         {
-            richTextBox_log.Text += string.Join("\r\n", logger.logread().ToArray());
+            richTextBox_log.Text += string.Join("\r\n", Logger.Logread().ToArray());
         }
 
-        public void gameSettingUpdate()
+        public void GameSettingUpdate()
         {
-            this.Cursor = Cursors.WaitCursor;
-            dictionaryofgamessettings = XmlHandler.GetGameSettings("gamesettings.ini");
-            this.Cursor = Cursors.Default;
+            Cursor = Cursors.WaitCursor;
+            _gamesSettings = XmlHandler.GetGameSettings("gamesettings.ini");
+            Cursor = Cursors.Default;
         }
 
         /// <summary>
@@ -161,31 +158,31 @@ namespace PBW2AutoPlrClient
         /// updates the ServerSettingsObj.Connection_Status (currently only with "Connected")
         /// 
         /// </remarks>
-        private void pbwLogin()
+        private void PbwLogin()
         {
 
-            string address = "https://" + ServerSettingsObj.PBW_Address;
+            string address = "https://" + ServerSettingsObj.PbwAddress;
 
-            string login_path = ServerSettingsObj.PBW_LoginPath;
-            string login = ServerSettingsObj.User_UserName;
-            string pass = ServerSettingsObj.User_Password;
-            string login_address = address + login_path;
+            string loginPath = ServerSettingsObj.PbwLoginPath;
+            string login = ServerSettingsObj.UserUserName;
+            string pass = ServerSettingsObj.UserPassword;
+            string loginAddress = address + loginPath;
             toolStripStatusLabel_acty.Text = "Attempting PBW Login via https";
-            this.Refresh();
-            this.Cursor = Cursors.WaitCursor;
-            bool connectsuccess = PBW_ComsHandler.connectPBW(login_address, login, pass);
+            Refresh();
+            Cursor = Cursors.WaitCursor;
+            bool connectsuccess = PbwComsHandler.ConnectPbw(loginAddress, login, pass);
             toolStripStatusLabel_acty.Text = "";
             if (connectsuccess) 
             { 
                 toolStripStatusLabel_connectionstate.Text = "Connected";
-                ServerSettingsObj.Connection_Status = "Connected"; 
-                pbwGamelist();
-                pbwServerData();
+                ServerSettingsObj.ConnectionStatus = "Connected"; 
+                PbwGamelist();
+                PbwServerData();
 
             }
             else { toolStripStatusLabel_connectionstate.Text = "Disconnected"; }
-            this.Cursor = Cursors.Default;
-            refreshlogview();
+            Cursor = Cursors.Default;
+            Refreshlogview();
         }
 
         /// <summary>
@@ -196,23 +193,23 @@ namespace PBW2AutoPlrClient
         /// <remarks>
         /// calls xmlServerData to interpret the xmldata. 
         /// </remarks>
-        private void pbwServerData()
+        private void PbwServerData()
         {
 
-            string address = "http://" + ServerSettingsObj.PBW_Address;
-            string node_path = "node/player";
-            string url = address + node_path;
+            string address = "http://" + ServerSettingsObj.PbwAddress;
+            string nodePath = "node/player";
+            string url = address + nodePath;
 
             CookieContainer cookies = ServerSettingsObj.CookieJar;
 
-            this.Cursor = Cursors.WaitCursor;
+            Cursor = Cursors.WaitCursor;
 
-            string xmldata = PBW_ComsHandler.get_PbwXmlData(cookies, url);
+            string xmldata = PbwComsHandler.get_PbwXmlData(cookies, url);
 
             if (xmldata == null) //probibly throw an exception from PBW_ComsHandler would be better.
             {
-                pbwLogin();
-                xmldata = PBW_ComsHandler.get_PbwXmlData(cookies, url);
+                PbwLogin();
+                xmldata = PbwComsHandler.get_PbwXmlData(cookies, url);
                 if (xmldata == null) //still? login fail. redo this when give pbwLogin a return.
                 {
                     MessageBox.Show("unable to get ServerData from PBW.");
@@ -220,10 +217,10 @@ namespace PBW2AutoPlrClient
             }
             else
             {
-                xmlServerData(xmldata);
+                XmlServerData(xmldata);
             }
             toolStripStatusLabel_acty.Text = "";
-            this.Cursor = Cursors.Default;
+            Cursor = Cursors.Default;
         }
 
         /// <summary>
@@ -234,35 +231,35 @@ namespace PBW2AutoPlrClient
         /// <remarks>
         /// calls  XmlHandler.xmlToGameObj to interpret the xmldata and build/update a dictionary of gameobjects
         /// </remarks>
-        private void pbwGamelist()
+        private void PbwGamelist()
         {
 
-            string address = "https://" + ServerSettingsObj.PBW_Address;
-            string gamelist_path = ServerSettingsObj.PBW_GamesListPath;
-            string gamelisturl = address + gamelist_path;
+            string address = "https://" + ServerSettingsObj.PbwAddress;
+            string gamelistPath = ServerSettingsObj.PbwGamesListPath;
+            string gamelisturl = address + gamelistPath;
 
             CookieContainer cookies = ServerSettingsObj.CookieJar;
 
-            this.Cursor = Cursors.WaitCursor;
+            Cursor = Cursors.WaitCursor;
 
-            string xmlgamelist = PBW_ComsHandler.get_PbwXmlData(cookies, gamelisturl);
+            string xmlgamelist = PbwComsHandler.get_PbwXmlData(cookies, gamelisturl);
             if (xmlgamelist == null)
             {
-                pbwLogin();
-                xmlgamelist = PBW_ComsHandler.get_PbwXmlData(cookies, gamelisturl);
+                PbwLogin();
+                xmlgamelist = PbwComsHandler.get_PbwXmlData(cookies, gamelisturl);
                 if (xmlgamelist == null) //still? login fail. redo this when give pbwLogin a return.
                 {
-                    MessageBox.Show("unable to get games list from PBW.");
+                    MessageBox.Show("Unable to get games list from PBW.");
                 }
             }
             else
             {
 
-                dictionaryofgameobjects = XmlHandler.xmlToGameObj(xmlgamelist, dictionaryofgameobjects);
-                refreshGamesList();
+                _gameObjects = XmlHandler.XmlToGameObj(xmlgamelist, _gameObjects);
+                RefreshGamesList();
             }
             toolStripStatusLabel_acty.Text = "";
-            this.Cursor = Cursors.Default; 
+            Cursor = Cursors.Default; 
 
         }
 
@@ -275,16 +272,16 @@ namespace PBW2AutoPlrClient
         /// <remarks>
         /// 
         /// </remarks>
-        private void xmlServerData(string xmlstring)
+        private void XmlServerData(string xmlstring)
 
         {
 
             Dictionary<string,string> serversettings = new Dictionary<string,string>();
             serversettings = XmlHandler.ServerSettings(xmlstring);
 
-            ServerSettingsObj.Refresh_Rate = int.Parse(serversettings["update_interval"]);
-            if (ServerSettingsObj.Refresh_Rate != 0)
-            { timer1.Interval = ServerSettingsObj.Refresh_Rate * 1000; }
+            ServerSettingsObj.RefreshRate = int.Parse(serversettings["update_interval"]);
+            if (ServerSettingsObj.RefreshRate != 0)
+            { _timer1.Interval = ServerSettingsObj.RefreshRate * 1000; }
             //also get server time and max file size?   
         }
 
@@ -296,20 +293,20 @@ namespace PBW2AutoPlrClient
         /// <remarks>
         /// also hides the empire password colomn.
         /// </remarks>
-        private void refreshGamesList()
+        private void RefreshGamesList()
         {
-            int selected_gameIndex = 0;
+            int selectedGameIndex = 0;
             List<GameObject> listofgames = new List<GameObject>();
-            foreach (GameObject game in dictionaryofgameobjects.Values)
+            foreach (GameObject game in _gameObjects.Values)
             {
                 listofgames.Add(game);
-                if (game.GameName == selected_game) // if the game name == selected_game ( a class string) 
+                if (game.GameName == _selectedGame) // if the game name == selected_game ( a class string) 
                 {
-                    selected_gameIndex = listofgames.Count - 1; //then we know the index of the row that needs to be selected.
+                    selectedGameIndex = listofgames.Count - 1; //then we know the index of the row that needs to be selected.
                 }
                 if (game.GamePlrStatus == "waiting")
                 {
-                    playSimpleSound();
+                    PlaySimpleSound();
                 }
             }
 
@@ -319,8 +316,8 @@ namespace PBW2AutoPlrClient
             dataGridView_games.Columns["GameNextTurn"].DisplayIndex = 2;
             dataGridView_games.Columns["GamePlrEmpPassword"].Visible = false;
                       
-            dataGridView_games.Rows[selected_gameIndex].Selected = true;
-            dataGridView_games.CurrentCell = dataGridView_games.Rows[selected_gameIndex].Cells[1];
+            dataGridView_games.Rows[selectedGameIndex].Selected = true;
+            dataGridView_games.CurrentCell = dataGridView_games.Rows[selectedGameIndex].Cells[1];
             dataGridView_games.Refresh();
         }
  
@@ -336,33 +333,33 @@ namespace PBW2AutoPlrClient
         {
 
             
-            string turn_num = dictionaryofgameobjects[selected_game].GameTurnNum.ToString();
-            string game_name = dictionaryofgameobjects[selected_game].GameName;
-            string download_dir = Path.GetDirectoryName(ServerSettingsObj.User_Download_Directory);
-            string pbwaddress = "http://" + ServerSettingsObj.PBW_Address;
-            string turn_download_URI = ServerSettingsObj.PBW_TurnDownloadPath;
-            string game_path_URI = ServerSettingsObj.PBW_GamePath;
+            string turnNum = _gameObjects[_selectedGame].GameTurnNum.ToString();
+            string gameName = _gameObjects[_selectedGame].GameName;
+            string downloadDir = Path.GetDirectoryName(ServerSettingsObj.UserDownloadDirectory);
+            string pbwaddress = "http://" + ServerSettingsObj.PbwAddress;
+            string turnDownloadUri = ServerSettingsObj.PbwTurnDownloadPath;
+            string gamePathUri = ServerSettingsObj.PbwGamePath;
             
-            string fulldownloadURI = pbwaddress + game_path_URI + game_name + "/" + turn_download_URI;
+            string fulldownloadUri = pbwaddress + gamePathUri + gameName + "/" + turnDownloadUri;
             
-            string downloadfilename = Path.GetFullPath(Path.Combine(download_dir, Path.GetFileName(game_name + turn_num + ".rar")));
+            string downloadfilename = Path.GetFullPath(Path.Combine(downloadDir, Path.GetFileName(gameName + turnNum + ".rar")));
             
-            if (!File.Exists(download_dir))
+            if (!File.Exists(downloadDir))
             {
-                Directory.CreateDirectory(download_dir);
+                Directory.CreateDirectory(downloadDir);
             }
             toolStripStatusLabel_acty.Text = "Attempting Gamefile Download";
-            this.Refresh();
-            this.Cursor = Cursors.WaitCursor;
+            Refresh();
+            Cursor = Cursors.WaitCursor;
 
             CookieContainer cookies = ServerSettingsObj.CookieJar;
 
-            PBW_ComsHandler.downloadGame(cookies, fulldownloadURI, downloadfilename);
+            PbwComsHandler.DownloadGame(cookies, fulldownloadUri, downloadfilename);
             toolStripStatusLabel_acty.Text = "Done?";
-            this.Refresh();
-            this.Cursor = Cursors.Default;
+            Refresh();
+            Cursor = Cursors.Default;
             cleanup_download();
-            refreshlogview();
+            Refreshlogview();
         }
  
         /// <summary>
@@ -376,45 +373,45 @@ namespace PBW2AutoPlrClient
         private void upload_plrfile()
         {
 
-            string game_type = dictionaryofgameobjects[selected_game.ToString()].GameType;
-            string game_mod = dictionaryofgameobjects[selected_game.ToString()].GameMod;
-            string game_name = dictionaryofgameobjects[selected_game.ToString()].GameName;
-            string savegamepath = dictionaryofgamessettings[game_type].GameMods[game_mod].ModSavePath;
-            string upfilemask = dictionaryofgamessettings[game_type].GameUploadFileMask;
-            string address = "http://" + ServerSettingsObj.PBW_Address;
-            string uploadpath = ServerSettingsObj.PBW_UploadPlrFilePath;
-            string gamepath = ServerSettingsObj.PBW_GamePath;
-            string uploadurl = address + gamepath + game_name + "/" + uploadpath;
-            string uploadformParam = ServerSettingsObj.PBW_UploadTurnFormParam;
+            string gameType = _gameObjects[_selectedGame].GameType;
+            string gameMod = _gameObjects[_selectedGame].GameMod;
+            string gameName = _gameObjects[_selectedGame].GameName;
+            string savegamepath = _gamesSettings[gameType].GameMods[gameMod].ModSavePath;
+            string upfilemask = _gamesSettings[gameType].GameUploadFileMask;
+            string address = "http://" + ServerSettingsObj.PbwAddress;
+            string uploadpath = ServerSettingsObj.PbwUploadPlrFilePath;
+            string gamepath = ServerSettingsObj.PbwGamePath;
+            string uploadurl = address + gamepath + gameName + "/" + uploadpath;
+            string uploadformParam = ServerSettingsObj.PbwUploadTurnFormParam;
 
-            upfilemask = Interpreter.interpretString(upfilemask, dictionaryofgameobjects[selected_game.ToString()], dictionaryofgamessettings[game_type]);
+            upfilemask = Interpreter.InterpretString(upfilemask, _gameObjects[_selectedGame], _gamesSettings[gameType]);
             string upfile = savegamepath + upfilemask;
             CookieContainer cookies = ServerSettingsObj.CookieJar;
 
             toolStripStatusLabel_acty.Text = "Attempting Playerfile upload";
-            this.Refresh();
-            this.Cursor = Cursors.WaitCursor;
+            Refresh();
+            Cursor = Cursors.WaitCursor;
 
-            var response = PBW_ComsHandler.uploadTurn(cookies, upfile, uploadurl, uploadformParam);
+            var response = PbwComsHandler.UploadTurn(cookies, upfile, uploadurl, uploadformParam);
 
             if (response)
             {
  
                 toolStripStatusLabel_acty.Text = "Done!";
-                this.Refresh();
-                this.Cursor = Cursors.Default;
+                Refresh();
+                Cursor = Cursors.Default;
             }
             else
             {
                 //MessageBox.Show("Turn could not be uploaded.");
                 toolStripStatusLabel_acty.Text = "Failed...";
-                this.Refresh();
-                this.Cursor = Cursors.Default;
+                Refresh();
+                Cursor = Cursors.Default;
             }
 
-            pbwGamelist();
-            refreshlogview();
-            pbwServerData();
+            PbwGamelist();
+            Refreshlogview();
+            PbwServerData();
         }
 
         /// <summary>
@@ -428,27 +425,27 @@ namespace PBW2AutoPlrClient
         private void extract_game()
         {
 
-            string turn_num = dictionaryofgameobjects[selected_game.ToString()].GameTurnNum.ToString();
-            string game_name = dictionaryofgameobjects[selected_game.ToString()].GameName;
-            string game_type = dictionaryofgameobjects[selected_game.ToString()].GameType;
-            string game_mod = dictionaryofgameobjects[selected_game.ToString()].GameMod;
+            string turnNum = _gameObjects[_selectedGame].GameTurnNum.ToString();
+            string gameName = _gameObjects[_selectedGame].GameName;
+            string gameType = _gameObjects[_selectedGame].GameType;
+            string gameMod = _gameObjects[_selectedGame].GameMod;
 
-            string download_dir = Path.GetDirectoryName(ServerSettingsObj.User_Download_Directory);
-            string downloadfilename = Path.GetFullPath(Path.Combine(download_dir, Path.GetFileName(game_name + turn_num + ".rar")));
+            string downloadDir = Path.GetDirectoryName(ServerSettingsObj.UserDownloadDirectory);
+            string downloadfilename = Path.GetFullPath(Path.Combine(downloadDir, Path.GetFileName(gameName + turnNum + ".rar")));
 
-            string savegamepath = dictionaryofgamessettings[game_type].GameMods[game_mod].ModSavePath;
-            savegamepath = Path.GetDirectoryName(Interpreter.interpretString(savegamepath, dictionaryofgameobjects[selected_game.ToString()], dictionaryofgamessettings[game_type]));
+            string savegamepath = _gamesSettings[gameType].GameMods[gameMod].ModSavePath;
+            savegamepath = Path.GetDirectoryName(Interpreter.InterpretString(savegamepath, _gameObjects[_selectedGame], _gamesSettings[gameType]));
             int arc = ArchiveHandler.setLibPath();
 
             toolStripStatusLabel_acty.Text = "Extracting game files";
-            this.Refresh();
-            this.Cursor = Cursors.WaitCursor;
+            Refresh();
+            Cursor = Cursors.WaitCursor;
 
             arc = ArchiveHandler.extractArchive(downloadfilename, savegamepath);
 
             toolStripStatusLabel_acty.Text = "Extracting Done";
-            this.Refresh();
-            this.Cursor = Cursors.Default;
+            Refresh();
+            Cursor = Cursors.Default;
         }
  
         /// <summary>
@@ -459,14 +456,14 @@ namespace PBW2AutoPlrClient
         /// <remarks>
         /// 
         /// </remarks>
-        private void pregameScriptProcessLauncher(bool closeaftergame = true)
+        private void PregameScriptProcessLauncher(bool closeaftergame = true)
         {
 
 
-            string game_type = dictionaryofgameobjects[selected_game.ToString()].GameType;
-            string scriptname = Path.GetFullPath(dictionaryofgamessettings[game_type].GamePreScript);
+            string gameType = _gameObjects[_selectedGame].GameType;
+            string scriptname = Path.GetFullPath(_gamesSettings[gameType].GamePreScript);
 
-            System.Threading.Thread prescriptthread = new System.Threading.Thread(delegate()
+            Thread prescriptthread = new Thread(delegate()
             {
                 try
                 {
@@ -478,14 +475,14 @@ namespace PBW2AutoPlrClient
                 }
                 catch (Exception e)
                 {
-                    logger.logwrite("Script thread Process Error: " + e.Message);
+                    Logger.Logwrite("Script thread Process Error: " + e.Message);
                     MessageBox.Show("Script thread Process Error: " + e.Message);
                 }
                 while ((!process_preGameProcess.StandardError.EndOfStream))// || (!process_GameLauncher.StandardOutput.EndOfStream))
                 {
                     string line = process_preGameProcess.StandardError.ReadLine();
-                    logger.logwrite("StdErr: ", false);
-                    logger.logwrite(line);
+                    Logger.Logwrite("StdErr: ", false);
+                    Logger.Logwrite(line);
                     //line = process_GameLauncher.StandardOutput.ReadLine();
                     //logger.logwrite("StdOut: ", false);
                     //logger.logwrite(line);
@@ -499,14 +496,14 @@ namespace PBW2AutoPlrClient
             }
             catch (Exception e)
             {
-                logger.logwrite("Script thread Process Error: " + e.Message);
+                Logger.Logwrite("Script thread Process Error: " + e.Message);
                 MessageBox.Show("Script thread Process Error: " + e.Message);
             }
             finally
             {
-                refreshlogview();
+                Refreshlogview();
             }            
-            gameProcessLauncher();
+            GameProcessLauncher();
 
         }
  
@@ -518,32 +515,41 @@ namespace PBW2AutoPlrClient
         /// <remarks>
         /// 
         /// </remarks>
-        private void gameProcessLauncher()
+        private void GameProcessLauncher()
         {
-            string turn_num = dictionaryofgameobjects[selected_game.ToString()].GameTurnNum.ToString();
-            string game_name = dictionaryofgameobjects[selected_game.ToString()].GameName;
-            string game_type = dictionaryofgameobjects[selected_game.ToString()].GameType;
-            string game_mod = dictionaryofgameobjects[selected_game.ToString()].GameMod;
+            string turnNum = _gameObjects[_selectedGame].GameTurnNum.ToString();
+            string gameName = _gameObjects[_selectedGame].GameName;
+            string gameType = _gameObjects[_selectedGame].GameType;
+            string gameMod = _gameObjects[_selectedGame].GameMod;
 
             
 
-            string savegamepath = dictionaryofgamessettings[game_type].GameMods[game_mod].ModSavePath;
-            savegamepath = Path.GetDirectoryName(Interpreter.interpretString(savegamepath, dictionaryofgameobjects[selected_game.ToString()], dictionaryofgamessettings[game_type]));
+            string savegamepath = _gamesSettings[gameType].GameMods[gameMod].ModSavePath;
+            savegamepath = Path.GetDirectoryName(Interpreter.InterpretString(savegamepath, _gameObjects[_selectedGame], _gamesSettings[gameType]));
 
-            string launchexe = dictionaryofgamessettings[game_type].GameExe;
-            launchexe = Path.GetFullPath(Interpreter.interpretString(launchexe, dictionaryofgameobjects[selected_game.ToString()], dictionaryofgamessettings[game_type]));
-            string workingdir = Path.GetDirectoryName(launchexe);
-            string launchargs = dictionaryofgamessettings[game_type].GameArguments;
-            launchargs = Interpreter.interpretString(launchargs, dictionaryofgameobjects[selected_game.ToString()], dictionaryofgamessettings[game_type]);
+            string launchexe = _gamesSettings[gameType].GameExe;
+            launchexe = Path.GetFullPath(Interpreter.InterpretString(launchexe, _gameObjects[_selectedGame], _gamesSettings[gameType]));
+            
+            string workingdir; // = Path.GetDirectoryName(launchexe);
+            if (_gamesSettings[gameType].WorkingDirectory != null ||
+                _gamesSettings[gameType].WorkingDirectory != "")
+            {
+                workingdir = Path.GetDirectoryName(_gamesSettings[gameType].WorkingDirectory);
+            }
+            else
+                workingdir = Path.GetDirectoryName(launchexe);
 
-            logger.logwrite("launching game");
-            logger.logwrite(launchexe + " " + launchargs );
-            logger.logwrite(workingdir);
+            string launchargs = _gamesSettings[gameType].GameArguments;
+            launchargs = Interpreter.InterpretString(launchargs, _gameObjects[_selectedGame], _gamesSettings[gameType]);
 
-            toolStripStatusLabel_acty.Text = "Launching " + game_type;
-            this.Refresh();
+            Logger.Logwrite("launching game");
+            Logger.Logwrite(launchexe + " " + launchargs );
+            Logger.Logwrite(workingdir);
 
-            System.Threading.Thread gamethread = new System.Threading.Thread(delegate()
+            toolStripStatusLabel_acty.Text = "Launching " + gameType;
+            Refresh();
+
+            Thread gamethread = new Thread(delegate()
             {
                 try
                 {
@@ -563,13 +569,13 @@ namespace PBW2AutoPlrClient
                         //logger.logwrite("StdOut: ", false);
                         //logger.logwrite(linestdout);
                         string linestderr = process_GameLauncher.StandardError.ReadLine();
-                        logger.logwrite("StdErr: ", false);
-                        logger.logwrite(linestderr);
+                        Logger.Logwrite("StdErr: ", false);
+                        Logger.Logwrite(linestderr);
                     }
                 }
                 catch (Exception e)
                 {
-                    logger.logwrite("Game thread Process Error: " + e.Message);
+                    Logger.Logwrite("Game thread Process Error: " + e.Message);
                     MessageBox.Show("Game thread Process Error: " + e.Message);
                 }
             });
@@ -579,12 +585,12 @@ namespace PBW2AutoPlrClient
             }
             catch (Exception e)
             {
-                logger.logwrite("Game Process Error: " + e.Message);
+                Logger.Logwrite("Game Process Error: " + e.Message);
                 MessageBox.Show("Game Process Error: " + e.Message);
             }
             finally
             { 
-                refreshlogview();
+                Refreshlogview();
             }
            
         }
@@ -602,7 +608,7 @@ namespace PBW2AutoPlrClient
         {
             try
             {
-                System.Diagnostics.Process.Start(sUrl);
+                Process.Start(sUrl);
             }
             catch (Exception exc1)
             {
@@ -616,8 +622,8 @@ namespace PBW2AutoPlrClient
                     // the URL using IE if we can.
                     try
                     {
-                        System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo("IExplore.exe", sUrl);
-                        System.Diagnostics.Process.Start(startInfo);
+                        ProcessStartInfo startInfo = new ProcessStartInfo("IExplore.exe", sUrl);
+                        Process.Start(startInfo);
                         startInfo = null;
                     }
                     catch (Exception exc2)
@@ -628,15 +634,15 @@ namespace PBW2AutoPlrClient
             }
         }
 
-        private void playSimpleSound()
+        private void PlaySimpleSound()
         {
-            System.Media.SoundPlayer simpleSound = new System.Media.SoundPlayer(@"newturn.wav");
+            SoundPlayer simpleSound = new SoundPlayer(@"newturn.wav");
             simpleSound.Play();
         }
 
         private void button_refresh_Click(object sender, EventArgs e)
         {
-            pbwGamelist();
+            PbwGamelist();
         }
 
     }

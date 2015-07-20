@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace PBW2AutoPlrClient
 {
@@ -45,7 +43,7 @@ namespace PBW2AutoPlrClient
                 string breadtop = null;
                 string breadbottom = null;
                 string filling = null;
-                char[] delimiters = new char[] { '<', '>' };
+                char[] delimiters = { '<', '>' };
                 //List<string> sandwitch = new List<string>();
                 string[] sandwitch = line.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
                 breadtop = sandwitch[0].Trim();
@@ -133,7 +131,7 @@ namespace PBW2AutoPlrClient
         private DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
             // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
             dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
             return dtDateTime;
         }

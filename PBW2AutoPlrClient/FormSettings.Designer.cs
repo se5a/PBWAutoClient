@@ -1,11 +1,14 @@
-﻿namespace PBW2AutoPlrClient
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace PBW2AutoPlrClient
 {
     partial class FormSettings
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -594,45 +597,45 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox_pbwsettings;
-        private System.Windows.Forms.TabControl tabControl_settings;
-        private System.Windows.Forms.TabPage tabPage_serversettings;
-        private System.Windows.Forms.GroupBox groupBox_usersettings;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox_pbwplayeruploadformparameter;
-        private System.Windows.Forms.TextBox textBox_pbwturndownloadpath;
-        private System.Windows.Forms.TextBox textBox_pbwaddress;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox_pbwgamelistpath;
-        private System.Windows.Forms.TextBox textBox_pbwplayeruploadpath;
-        private System.Windows.Forms.TextBox textBox_pbwloginpath;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBox_userpassword;
-        private System.Windows.Forms.TextBox textBox_userlogin;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Button buttonCancel;
-        private System.Windows.Forms.Button buttonSave;
-        private System.Windows.Forms.CheckBox checkBox_user_savelogin;
-        private System.Windows.Forms.TreeView treeView_gmestn;
-        private System.Windows.Forms.Button button_gmestn_addmod;
-        private System.Windows.Forms.Button button_gmestn_addgame;
-        private System.Windows.Forms.Button button_gmestn_save;
-        private System.Windows.Forms.Button button_gmestn_cancel;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.TextBox textBox_gmestn_nodedata;
-        private System.Windows.Forms.ToolTip toolTip_Settings;
-        private System.Windows.Forms.TextBox textBox_pbwgamepath;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
-        private System.Windows.Forms.TextBox textBox_user_dl_dir;
-        private System.Windows.Forms.Label label10;
+        private GroupBox groupBox_pbwsettings;
+        private TabControl tabControl_settings;
+        private TabPage tabPage_serversettings;
+        private GroupBox groupBox_usersettings;
+        private TabPage tabPage2;
+        private Label label3;
+        private Label label2;
+        private TextBox textBox_pbwplayeruploadformparameter;
+        private TextBox textBox_pbwturndownloadpath;
+        private TextBox textBox_pbwaddress;
+        private Label label1;
+        private TextBox textBox_pbwgamelistpath;
+        private TextBox textBox_pbwplayeruploadpath;
+        private TextBox textBox_pbwloginpath;
+        private Label label6;
+        private Label label5;
+        private Label label4;
+        private TextBox textBox_userpassword;
+        private TextBox textBox_userlogin;
+        private Label label8;
+        private Label label7;
+        private Button buttonCancel;
+        private Button buttonSave;
+        private CheckBox checkBox_user_savelogin;
+        private TreeView treeView_gmestn;
+        private Button button_gmestn_addmod;
+        private Button button_gmestn_addgame;
+        private Button button_gmestn_save;
+        private Button button_gmestn_cancel;
+        private Label label11;
+        private TextBox textBox_gmestn_nodedata;
+        private ToolTip toolTip_Settings;
+        private TextBox textBox_pbwgamepath;
+        private Label label9;
+        private TableLayoutPanel tableLayoutPanel1;
+        private TableLayoutPanel tableLayoutPanel2;
+        private TableLayoutPanel tableLayoutPanel3;
+        private TableLayoutPanel tableLayoutPanel4;
+        private TextBox textBox_user_dl_dir;
+        private Label label10;
     }
 }

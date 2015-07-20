@@ -1,11 +1,15 @@
-﻿namespace PBW2AutoPlrClient
+﻿using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows.Forms;
+
+namespace PBW2AutoPlrClient
 {
-    partial class Form_PBWAutoPlrClient
+    partial class FormPbwAutoPlrClient
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -28,7 +32,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_PBWAutoPlrClient));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPbwAutoPlrClient));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -319,7 +323,7 @@
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip1);
-            this.Name = "Form_PBWAutoPlrClient";
+            this.Name = "FormPbwAutoPlrClient";
             this.Text = "PBW AutoPlr Client";
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
@@ -338,26 +342,26 @@
 
         #endregion
 
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton toolStripButton_connect;
-        private System.Windows.Forms.ToolStripButton toolStripButton_opensettings;
-        public System.Windows.Forms.RichTextBox richTextBox_log;
-        private System.Windows.Forms.DataGridView dataGridView_games;
-        private System.Windows.Forms.Button button_upload;
-        private System.Windows.Forms.Button button_download;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Button button_extract;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_connectionstate;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_acty;
-        private System.Windows.Forms.Button button_playGame;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Diagnostics.Process process_GameLauncher;
-        private System.Diagnostics.Process process_preGameProcess;
-        private System.Windows.Forms.Button button_launchpbw;
-        private System.Windows.Forms.Button button_refresh;
+        private StatusStrip statusStrip1;
+        private ToolStrip toolStrip1;
+        private ToolStripButton toolStripButton_connect;
+        private ToolStripButton toolStripButton_opensettings;
+        public RichTextBox richTextBox_log;
+        private DataGridView dataGridView_games;
+        private Button button_upload;
+        private Button button_download;
+        private TabControl tabControl1;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
+        private Button button_extract;
+        private ToolStripStatusLabel toolStripStatusLabel_connectionstate;
+        private ToolStripStatusLabel toolStripStatusLabel_acty;
+        private Button button_playGame;
+        private TableLayoutPanel tableLayoutPanel1;
+        private Process process_GameLauncher;
+        private Process process_preGameProcess;
+        private Button button_launchpbw;
+        private Button button_refresh;
 
     }
 }

@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using System.IO;
-using PBW2AutoPlrClient.Properties;
-
-
 
 namespace PBW2AutoPlrClient
 {
@@ -23,7 +15,7 @@ namespace PBW2AutoPlrClient
             InitializeComponent();
             
             FormSettings_Load();
-            populateTreeview("gamesettings.ini");
+            PopulateTreeview("gamesettings.ini");
             treeView_gmestn.ExpandAll();
             
         }
@@ -32,40 +24,40 @@ namespace PBW2AutoPlrClient
         private void FormSettings_Load()
         {
             //var settings = Settings.Default;
-            textBox_pbwaddress.Text = ServerSettingsObj.PBW_Address;
-            textBox_pbwgamelistpath.Text = ServerSettingsObj.PBW_GamesListPath;
-            textBox_pbwloginpath.Text = ServerSettingsObj.PBW_LoginPath;
-            textBox_pbwplayeruploadformparameter.Text = ServerSettingsObj.PBW_UploadTurnFormParam;
-            textBox_pbwplayeruploadpath.Text = ServerSettingsObj.PBW_UploadPlrFilePath;
-            textBox_pbwturndownloadpath.Text = ServerSettingsObj.PBW_TurnDownloadPath;
-            textBox_pbwgamepath.Text = ServerSettingsObj.PBW_GamePath;
+            textBox_pbwaddress.Text = ServerSettingsObj.PbwAddress;
+            textBox_pbwgamelistpath.Text = ServerSettingsObj.PbwGamesListPath;
+            textBox_pbwloginpath.Text = ServerSettingsObj.PbwLoginPath;
+            textBox_pbwplayeruploadformparameter.Text = ServerSettingsObj.PbwUploadTurnFormParam;
+            textBox_pbwplayeruploadpath.Text = ServerSettingsObj.PbwUploadPlrFilePath;
+            textBox_pbwturndownloadpath.Text = ServerSettingsObj.PbwTurnDownloadPath;
+            textBox_pbwgamepath.Text = ServerSettingsObj.PbwGamePath;
 
-            checkBox_user_savelogin.Checked = ServerSettingsObj.User_SaveLogin;
-            textBox_userlogin.Text = ServerSettingsObj.User_UserName;
+            checkBox_user_savelogin.Checked = ServerSettingsObj.UserSaveLogin;
+            textBox_userlogin.Text = ServerSettingsObj.UserUserName;
             textBox_userpassword.PasswordChar = '*';
-            textBox_userpassword.Text = ServerSettingsObj.User_Password;
-            textBox_user_dl_dir.Text = ServerSettingsObj.User_Download_Directory;
+            textBox_userpassword.Text = ServerSettingsObj.UserPassword;
+            textBox_user_dl_dir.Text = ServerSettingsObj.UserDownloadDirectory;
 
         }   
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
 
-            ServerSettingsObj.PBW_Address = textBox_pbwaddress.Text;
-            ServerSettingsObj.PBW_LoginPath = textBox_pbwloginpath.Text;
-            ServerSettingsObj.PBW_TurnDownloadPath = textBox_pbwturndownloadpath.Text;
-            ServerSettingsObj.PBW_GamesListPath = textBox_pbwgamelistpath.Text;
-            ServerSettingsObj.PBW_UploadPlrFilePath = textBox_pbwplayeruploadpath.Text;
-            ServerSettingsObj.PBW_UploadTurnFormParam = textBox_pbwplayeruploadformparameter.Text;
-            ServerSettingsObj.PBW_GamePath = textBox_pbwgamepath.Text;
+            ServerSettingsObj.PbwAddress = textBox_pbwaddress.Text;
+            ServerSettingsObj.PbwLoginPath = textBox_pbwloginpath.Text;
+            ServerSettingsObj.PbwTurnDownloadPath = textBox_pbwturndownloadpath.Text;
+            ServerSettingsObj.PbwGamesListPath = textBox_pbwgamelistpath.Text;
+            ServerSettingsObj.PbwUploadPlrFilePath = textBox_pbwplayeruploadpath.Text;
+            ServerSettingsObj.PbwUploadTurnFormParam = textBox_pbwplayeruploadformparameter.Text;
+            ServerSettingsObj.PbwGamePath = textBox_pbwgamepath.Text;
 
-            ServerSettingsObj.User_SaveLogin = checkBox_user_savelogin.Checked;
+            ServerSettingsObj.UserSaveLogin = checkBox_user_savelogin.Checked;
 
-            ServerSettingsObj.User_UserName = textBox_userlogin.Text;
-            ServerSettingsObj.User_Password = textBox_userpassword.Text;
-            ServerSettingsObj.saveSettings();
-            ServerSettingsObj.User_Download_Directory = textBox_user_dl_dir.Text;
-            this.Close();        
+            ServerSettingsObj.UserUserName = textBox_userlogin.Text;
+            ServerSettingsObj.UserPassword = textBox_userpassword.Text;
+            ServerSettingsObj.SaveSettings();
+            ServerSettingsObj.UserDownloadDirectory = textBox_user_dl_dir.Text;
+            Close();        
         }
 
         private void tabPage_serversettings_Click(object sender, EventArgs e)
@@ -84,14 +76,14 @@ namespace PBW2AutoPlrClient
             treeView_gmestn.SelectedNode = e.Node;
         }
 
-        private void populateTreeview(string filename)
+        private void PopulateTreeview(string filename)
         {
             
             try
             {
                 //Just a good practice -- change the cursor to a 
                 //wait cursor while the nodes populate
-                this.Cursor = Cursors.WaitCursor;
+                Cursor = Cursors.WaitCursor;
                 //First, we'll load the Xml document
                 XmlDocument xDoc = new XmlDocument();
                 xDoc.Load(filename);
@@ -101,10 +93,10 @@ namespace PBW2AutoPlrClient
                 treeView_gmestn.Nodes.Add(new
                     TreeNode(xDoc.DocumentElement.Name));
                 TreeNode tNode = new TreeNode();
-                tNode = (TreeNode)treeView_gmestn.Nodes[0];
+                tNode = treeView_gmestn.Nodes[0];
                 //We make a call to addTreeNode, 
                 //where we'll add all of our nodes
-                addTreeNode(xDoc.DocumentElement, tNode);
+                AddTreeNode(xDoc.DocumentElement, tNode);
                 //Expand the treeview to show all nodes
                 treeView_gmestn.ExpandAll();
             }
@@ -119,12 +111,12 @@ namespace PBW2AutoPlrClient
             }
             finally
             {
-                this.Cursor = Cursors.Default; //Change the cursor back
+                Cursor = Cursors.Default; //Change the cursor back
             }
             
         }
         //This function is called recursively until all nodes are loaded
-        private void addTreeNode(XmlNode xmlNode, TreeNode treeNode)
+        private void AddTreeNode(XmlNode xmlNode, TreeNode treeNode)
         {
             XmlNode xNode;
             TreeNode tNode;
@@ -138,7 +130,7 @@ namespace PBW2AutoPlrClient
                     xNode = xmlNode.ChildNodes[x];
                     treeNode.Nodes.Add(new TreeNode(xNode.Name));
                     tNode = treeNode.Nodes[x];
-                    addTreeNode(xNode, tNode);
+                    AddTreeNode(xNode, tNode);
                 }
             }
             else //No children, so add the outer xml (trimming off whitespace)
@@ -146,23 +138,23 @@ namespace PBW2AutoPlrClient
         }
         //We use this in the export and the saveNode 
         //functions, though it's only instantiated once.
-        private StreamWriter sr;
-        public void exportToXml(TreeView tv, string filename) 
+        private StreamWriter _sr;
+        public void ExportToXml(TreeView tv, string filename) 
         {
-            sr = new StreamWriter(filename, false, System.Text.Encoding.UTF8);
+            _sr = new StreamWriter(filename, false, Encoding.UTF8);
             //Write the header
-            sr.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
+            _sr.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
             //Write our root node
-            sr.WriteLine("<" + tv.Nodes[0].Text + ">");
+            _sr.WriteLine("<" + tv.Nodes[0].Text + ">");
             foreach (TreeNode node in tv.Nodes)
             {
-                saveNode(node.Nodes);
+                SaveNode(node.Nodes);
             }
             //Close the root node
-            sr.WriteLine("</" + tv.Nodes[0].Text + ">");
-            sr.Close();
+            _sr.WriteLine("</" + tv.Nodes[0].Text + ">");
+            _sr.Close();
         }
-        private void saveNode(TreeNodeCollection tnc)
+        private void SaveNode(TreeNodeCollection tnc)
         {
 
             foreach (TreeNode node in tnc)
@@ -172,23 +164,23 @@ namespace PBW2AutoPlrClient
                 //the children
                 int numtabs = node.Level;
                 string tabs = new string(' ', numtabs * 4);
-                sr.Write(tabs);
+                _sr.Write(tabs);
                 if (node.Nodes.Count > 0)
                 {
-                    sr.WriteLine("<" + node.Text + ">");
-                    saveNode(node.Nodes);
-                    sr.Write(tabs);
-                    sr.WriteLine("</" + node.Text + ">");
+                    _sr.WriteLine("<" + node.Text + ">");
+                    SaveNode(node.Nodes);
+                    _sr.Write(tabs);
+                    _sr.WriteLine("</" + node.Text + ">");
                 } 
                 else //No child nodes, so we just write the text
 
-                    sr.WriteLine(node.Text);
+                    _sr.WriteLine(node.Text);
             }
         }
         private void button_gmestn_save_Click(object sender, EventArgs e)
         {
-            exportToXml(treeView_gmestn, "gamesettings.ini");
-            this.Close();
+            ExportToXml(treeView_gmestn, "gamesettings.ini");
+            Close();
         }
 
         private void textBox_gmestn_nodedata_TextChanged(object sender, EventArgs e)
@@ -211,13 +203,7 @@ namespace PBW2AutoPlrClient
 
         private void button_gmestn_cancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
-
-        private void label10_Click(object sender, EventArgs e)
-        {
-
-        }
-
     }
 }

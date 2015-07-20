@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SevenZip;
 using System.IO;
-using System.Threading.Tasks;
+using SevenZip;
 
 namespace PBW2AutoPlrClient
 {
@@ -34,7 +31,7 @@ namespace PBW2AutoPlrClient
 
         }
 
-        public static int extractArchive(string inFileName, string extract_path)
+        public static int extractArchive(string inFileName, string extractPath)
         {
             // extract input archive
             FileStream fileStream;
@@ -49,7 +46,7 @@ namespace PBW2AutoPlrClient
                     //var memoryStream = new MemoryStream();
                     //extractor.ExtractFile(fileName, memoryStream);
                     // do what you want with your file here :)
-                    fileStream = File.Create(Path.Combine(extract_path, fileName));
+                    fileStream = File.Create(Path.Combine(extractPath, fileName));
                     
 
 
@@ -83,7 +80,7 @@ namespace PBW2AutoPlrClient
             return 1;
         }
 
-        public int compressArchive(Dictionary<string, Stream> files, string outFileName)
+        public int CompressArchive(Dictionary<string, Stream> files, string outFileName)
         {
             
             // create output archive

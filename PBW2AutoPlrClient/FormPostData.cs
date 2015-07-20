@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
 using System.IO;
+using System.Net;
+using System.Text;
 
 namespace PBW2AutoPlrClient
 {
@@ -11,7 +10,7 @@ namespace PBW2AutoPlrClient
     // http://www.briangrinstead.com/blog/multipart-form-post-in-c
     public static class FormUpload
     {
-        private static readonly Encoding encoding = Encoding.UTF8;
+        private static readonly Encoding Encoding = Encoding.UTF8;
         public static HttpWebResponse MultipartFormDataPost(CookieContainer cookies, string postUrl, string userAgent, Dictionary<string, object> postParameters)
         {
             string formDataBoundary = String.Format("----------{0:N}", Guid.NewGuid());
@@ -54,17 +53,17 @@ namespace PBW2AutoPlrClient
 
         private static byte[] GetMultipartFormData(Dictionary<string, object> postParameters, string boundary)
         {
-            Stream formDataStream = new System.IO.MemoryStream();
-            bool needsCLRF = false;
+            Stream formDataStream = new MemoryStream();
+            bool needsClrf = false;
 
             foreach (var param in postParameters)
             {
                 // Thanks to feedback from commenters, add a CRLF to allow multiple parameters to be added.
                 // Skip it on the first parameter, add it to subsequent parameters.
-                if (needsCLRF)
-                    formDataStream.Write(encoding.GetBytes("\r\n"), 0, encoding.GetByteCount("\r\n"));
+                if (needsClrf)
+                    formDataStream.Write(Encoding.GetBytes("\r\n"), 0, Encoding.GetByteCount("\r\n"));
 
-                needsCLRF = true;
+                needsClrf = true;
 
                 if (param.Value is FileParameter)
                 {
@@ -77,7 +76,7 @@ namespace PBW2AutoPlrClient
                         fileToUpload.FileName ?? param.Key,
                         fileToUpload.ContentType ?? "application/octet-stream");
 
-                    formDataStream.Write(encoding.GetBytes(header), 0, encoding.GetByteCount(header));
+                    formDataStream.Write(Encoding.GetBytes(header), 0, Encoding.GetByteCount(header));
 
                     // Write the file data directly to the Stream, rather than serializing it to a string.
                     formDataStream.Write(fileToUpload.File, 0, fileToUpload.File.Length);
@@ -88,13 +87,13 @@ namespace PBW2AutoPlrClient
                         boundary,
                         param.Key,
                         param.Value);
-                    formDataStream.Write(encoding.GetBytes(postData), 0, encoding.GetByteCount(postData));
+                    formDataStream.Write(Encoding.GetBytes(postData), 0, Encoding.GetByteCount(postData));
                 }
             }
 
             // Add the end of the request.  Start with a newline
             string footer = "\r\n--" + boundary + "--\r\n";
-            formDataStream.Write(encoding.GetBytes(footer), 0, encoding.GetByteCount(footer));
+            formDataStream.Write(Encoding.GetBytes(footer), 0, Encoding.GetByteCount(footer));
 
             // Dump the Stream into a byte[]
             formDataStream.Position = 0;

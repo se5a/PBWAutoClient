@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace PBW2AutoPlrClient
@@ -16,7 +14,7 @@ namespace PBW2AutoPlrClient
             
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form_PBWAutoPlrClient());
+            Application.Run(new FormPbwAutoPlrClient());
         }
     }
 }

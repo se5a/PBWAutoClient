@@ -212,7 +212,8 @@ namespace PBW2AutoPlrClient
                 xmldata = PbwComsHandler.get_PbwXmlData(cookies, url);
                 if (xmldata == null) //still? login fail. redo this when give pbwLogin a return.
                 {
-                    MessageBox.Show("unable to get ServerData from PBW.");
+                    //MessageBox.Show("unable to get ServerData from PBW.");
+                    toolStripStatusLabel_connectionstate.Text = @"Unable to get ServerData from PBW.";
                 }
             }
             else
@@ -249,7 +250,8 @@ namespace PBW2AutoPlrClient
                 xmlgamelist = PbwComsHandler.get_PbwXmlData(cookies, gamelisturl);
                 if (xmlgamelist == null) //still? login fail. redo this when give pbwLogin a return.
                 {
-                    MessageBox.Show("Unable to get games list from PBW.");
+                    //MessageBox.Show("Unable to get games list from PBW.");
+                    toolStripStatusLabel_connectionstate.Text = @"Unable to get games list from PBW.";
                 }
             }
             else

@@ -72,7 +72,8 @@ namespace PBW2AutoPlrClient
 			}
 			catch (WebException e)
 			{
-				MessageBox.Show(e.Message + " While logging in");
+                Logger.Logwrite(e.Message + " While logging in");
+				//MessageBox.Show(e.Message + " While logging in");
 				success = false;
 			}
 

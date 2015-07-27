@@ -132,7 +132,8 @@ namespace PBW2AutoPlrClient
             }
             catch (WebException e)
             {
-                MessageBox.Show(e.Message + " While getting XmlData");
+                Logger.Logwrite(e.Message + " While getting XmlData");
+                //MessageBox.Show(e.Message + " While getting XmlData");
             }
             finally
             {
@@ -181,7 +182,8 @@ namespace PBW2AutoPlrClient
 
             catch (WebException e)
             {
-                MessageBox.Show(e.Message + " While downloading turn file");
+                Logger.Logwrite(e.Message + " While downloading turn file");
+                //MessageBox.Show(e.Message + " While downloading turn file");
 
             }
             finally

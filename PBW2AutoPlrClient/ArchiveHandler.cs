@@ -69,6 +69,7 @@ namespace PBW2AutoPlrClient
             }
             catch (Exception ex)
             {
+                Logger.Logwrite(ex.Message);
                 Console.Error.WriteLine("Error: Could not open input archive: " + inFileName);
                 Console.Error.WriteLine("\t" + ex.Message);
                 
@@ -97,6 +98,7 @@ namespace PBW2AutoPlrClient
 			}
 			catch (Exception ex)
 			{
+                Logger.Logwrite(ex.Message);
 				Console.Error.WriteLine("Error: Could not create output archive: " + outFileName);
 
 				Console.Error.WriteLine("\t" + ex.Message);

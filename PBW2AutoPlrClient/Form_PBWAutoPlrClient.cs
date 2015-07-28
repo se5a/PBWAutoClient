@@ -638,7 +638,7 @@ namespace PBW2AutoPlrClient
 
         private void PlaySimpleSound()
         {
-            SoundPlayer simpleSound = new SoundPlayer(@"newturn.wav");
+            SoundPlayer simpleSound = new SoundPlayer("newturn.wav");
             simpleSound.Play();
         }
 
